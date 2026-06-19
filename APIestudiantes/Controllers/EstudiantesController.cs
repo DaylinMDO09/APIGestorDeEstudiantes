@@ -124,6 +124,40 @@ namespace APIestudiantes.Controllers
             }
             return Ok(estudiantesPorCarrera);
         }
+        [HttpGet("ObtenerEstudiantesAprobados")]
+        public ActionResult<List<EstudianteModel>> ObtenerEstudiantesAprobados()
+        {
+            var estudiantesAprobados = estudiantes.Where(e => e.Promedio >= 70).ToList();
+            if (estudiantesAprobados.Count == 0)
+            {
+                return NotFound();
+            }
+            return Ok(estudiantesAprobados);
+        }
+        [HttpGet("OrdenarEstudiantes")]
+        public ActionResult<List<EstudianteModel>> OrdenarEstudiantes([FromQuery] string campo, [FromQuery] string orden)
+        {
+            if (orden == null || (orden.ToLower() != "asc" && orden.ToLower() != "desc"))
+            {
+                return BadRequest("El parámetro 'orden' solo puede ser 'asc' o 'desc'.");
+            }
+            List<EstudianteModel> estudiantesOrdenados;
+            switch (campo.ToLower())
+            {
+                case "nombre":
+                    estudiantesOrdenados = orden.ToLower() == "asc" ? estudiantes.OrderBy(e => e.Nombre).ToList() : estudiantes.OrderByDescending(e => e.Nombre).ToList();
+                    break;
+                case "apellido":
+                    estudiantesOrdenados = orden.ToLower() == "asc" ? estudiantes.OrderBy(e => e.Apellido).ToList() : estudiantes.OrderByDescending(e => e.Apellido).ToList();
+                    break;
+                case "promedio":
+                    estudiantesOrdenados = orden.ToLower() == "asc" ? estudiantes.OrderBy(e => e.Promedio).ToList() : estudiantes.OrderByDescending(e => e.Promedio).ToList();
+                    break;
+                default:
+                    return BadRequest("Campo de ordenación no válido.");
+            }
+            return Ok(estudiantesOrdenados);
+        }
         [HttpGet("ObtenerEstudiantesActivos")]
         public ActionResult<List<EstudianteModel>> ObtenerEstudiantesActivos()
         {
