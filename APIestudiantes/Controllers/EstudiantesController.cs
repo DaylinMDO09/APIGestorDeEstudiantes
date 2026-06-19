@@ -124,6 +124,16 @@ namespace APIestudiantes.Controllers
             }
             return Ok(estudiantesPorCarrera);
         }
+        [HttpGet("ObtenerEstudiantesActivos")]
+        public ActionResult<List<EstudianteModel>> ObtenerEstudiantesActivos()
+        {
+            var estudiantesActivos = estudiantes.Where(e => e.Activo).ToList();
+            if (estudiantesActivos.Count == 0)
+            {
+                return NotFound();
+            }
+            return Ok(estudiantesActivos);
+        }
         [HttpDelete("EliminarEstudiante/{id}")]
         public ActionResult EliminarEstudiante(int id)
         {
