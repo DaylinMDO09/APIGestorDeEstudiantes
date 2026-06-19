@@ -104,5 +104,16 @@ namespace APIestudiantes.Controllers
             estudiante.Activo = estudianteActualizado.Activo;
             return NoContent();
         }
+        [HttpDelete("EliminarEstudiante/{id}")]
+        public ActionResult EliminarEstudiante(int id)
+        {
+            var estudiante = estudiantes.FirstOrDefault(e => e.Id == id);
+            if (estudiante == null)
+            {
+                return NotFound();
+            }
+            estudiantes.Remove(estudiante);
+            return NoContent();
+        }
     }
 }
