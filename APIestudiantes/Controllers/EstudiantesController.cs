@@ -70,6 +70,16 @@ namespace APIestudiantes.Controllers
         {
             return Ok(estudiantes);
         }
+        [HttpGet("ObtenerEstudiante/{id}")]
+        public ActionResult<EstudianteModel> ObtenerEstudiante(int id)
+        {
+            var estudiante = estudiantes.FirstOrDefault(e => e.Id == id);
+            if (estudiante == null)
+            {
+                return NotFound();
+            }
+            return Ok(estudiante);
+        }
         [HttpPost("AgregarEstudiante")]
         public ActionResult<EstudianteModel> AgregarEstudiante(EstudianteModel estudiante)
         {
@@ -77,6 +87,22 @@ namespace APIestudiantes.Controllers
             estudiantes.Add(estudiante);
             return CreatedAtAction(nameof(ObtenerEstudiantes), new { id = estudiante.Id }, estudiante);
         }
-
+        [HttpPut("ActualizarDatosEstudiante/{id}")]
+        public ActionResult<EstudianteModel> ActualizarDatosEstudiante(int id, EstudianteModel estudianteActualizado)
+        {
+            var estudiante = estudiantes.FirstOrDefault(e => e.Id == id);
+            if (estudiante == null)
+            {
+                return NotFound();
+            }
+            estudiante.Nombre = estudianteActualizado.Nombre;
+            estudiante.Apellido = estudianteActualizado.Apellido;
+            estudiante.Correo = estudianteActualizado.Correo;
+            estudiante.Carrera = estudianteActualizado.Carrera;
+            estudiante.Edad = estudianteActualizado.Edad;
+            estudiante.Promedio = estudianteActualizado.Promedio;
+            estudiante.Activo = estudianteActualizado.Activo;
+            return NoContent();
+        }
     }
 }
