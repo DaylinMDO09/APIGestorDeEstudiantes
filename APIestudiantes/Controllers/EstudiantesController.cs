@@ -81,14 +81,14 @@ namespace APIestudiantes.Controllers
             return Ok(estudiante);
         }
         [HttpPost("AgregarEstudiante")]
-        public ActionResult<EstudianteModel> AgregarEstudiante(EstudianteModel estudiante)
+        public ActionResult<EstudianteModel> AgregarEstudiante([FromBody] EstudianteModel estudiante)
         {
             estudiante.Id = estudiantes.Count + 1;
             estudiantes.Add(estudiante);
             return CreatedAtAction(nameof(ObtenerEstudiantes), new { id = estudiante.Id }, estudiante);
         }
         [HttpPut("ActualizarDatosEstudiante/{id}")]
-        public ActionResult<EstudianteModel> ActualizarDatosEstudiante(int id, EstudianteModel estudianteActualizado)
+        public ActionResult<EstudianteModel> ActualizarDatosEstudiante(int id, [FromBody] EstudianteModel estudianteActualizado)
         {
             var estudiante = estudiantes.FirstOrDefault(e => e.Id == id);
             if (estudiante == null)
@@ -104,6 +104,26 @@ namespace APIestudiantes.Controllers
             estudiante.Activo = estudianteActualizado.Activo;
             return NoContent();
         }
+        [HttpGet("BuscarEstudiante")]
+        public ActionResult<List<EstudianteModel>> BuscarEstudiante([FromQuery] string texto)
+        {
+            var estudiantesEncontrados = estudiantes.Where(e => e.Nombre.ToLower().Contains(texto.ToLower()) || e.Apellido.ToLower().Contains(texto.ToLower())).ToList();
+            if (estudiantesEncontrados.Count == 0)
+            {
+                return NotFound();
+            }
+            return Ok(estudiantesEncontrados);
+        }
+        [HttpGet("ObtenerEstudiantesPorCarrera/{carrera}")]
+        public ActionResult<List<EstudianteModel>> ObtenerEstudiantesPorCarrera(string carrera)
+        {
+            var estudiantesPorCarrera = estudiantes.Where(e => e.Carrera.ToLower() == carrera.ToLower()).ToList();
+            if (estudiantesPorCarrera.Count == 0)
+            {
+                return NotFound();
+            }
+            return Ok(estudiantesPorCarrera);
+        }
         [HttpDelete("EliminarEstudiante/{id}")]
         public ActionResult EliminarEstudiante(int id)
         {
@@ -115,5 +135,6 @@ namespace APIestudiantes.Controllers
             estudiantes.Remove(estudiante);
             return NoContent();
         }
+
     }
 }
