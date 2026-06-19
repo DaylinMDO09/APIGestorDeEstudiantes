@@ -158,6 +158,28 @@ namespace APIestudiantes.Controllers
             }
             return Ok(estudiantesOrdenados);
         }
+        [HttpGet("Rango")]
+        public ActionResult<List<EstudianteModel>> PorRango([FromQuery] decimal promedioDesde, [FromQuery] decimal promedioHasta)
+        {
+            var estudiantesEnRango = estudiantes.Where(e => e.Promedio >= promedioDesde && e.Promedio <= promedioHasta).ToList();
+            if (estudiantesEnRango.Count == 0)
+            {
+                return NotFound();
+            }
+            return Ok(estudiantesEnRango);
+        }
+        [HttpGet("Estadisticas")]
+        public ActionResult ObtenerEstadisticas()
+        {
+            var totalEstudiantes = estudiantes.Count;
+            var promedioGeneral = estudiantes.Count > 0 ? estudiantes.Average(e => e.Promedio) : 0;
+            var estudiantesAprobados = estudiantes.Count(e => e.Promedio >= 70);
+            var estudiantesReprobados = estudiantes.Count(e => e.Promedio < 70);
+            var mejorPromedio = estudiantes.Count > 0 ? estudiantes.Max(e => e.Promedio) : 0;
+            var peorPromedio = estudiantes.Count > 0 ? estudiantes.Min(e => e.Promedio) : 0;
+            var estudiantesPorCarrera = estudiantes.GroupBy(e => e.Carrera).Select(g => new { Carrera = g.Key, Cantidad = g.Count() }).ToList();
+            return Ok(new { TotalEstudiantes = totalEstudiantes, PromedioGeneral = promedioGeneral, EstudiantesAprobados = estudiantesAprobados, EstudiantesReprobados = estudiantesReprobados, MejorPromedio = mejorPromedio, PeorPromedio = peorPromedio, EstudiantesPorCarrera = estudiantesPorCarrera });
+        }
         [HttpGet("ObtenerEstudiantesActivos")]
         public ActionResult<List<EstudianteModel>> ObtenerEstudiantesActivos()
         {
