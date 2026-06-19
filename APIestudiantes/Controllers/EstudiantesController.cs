@@ -180,6 +180,17 @@ namespace APIestudiantes.Controllers
             var estudiantesPorCarrera = estudiantes.GroupBy(e => e.Carrera).Select(g => new { Carrera = g.Key, Cantidad = g.Count() }).ToList();
             return Ok(new { TotalEstudiantes = totalEstudiantes, PromedioGeneral = promedioGeneral, EstudiantesAprobados = estudiantesAprobados, EstudiantesReprobados = estudiantesReprobados, MejorPromedio = mejorPromedio, PeorPromedio = peorPromedio, EstudiantesPorCarrera = estudiantesPorCarrera });
         }
+        [HttpPut("EstadoEstudiante/{id}")]
+        public ActionResult CambiarEstadoEstudiante(int id, [FromQuery] bool activo)
+        {
+            var estudiante = estudiantes.FirstOrDefault(e => e.Id == id);
+            if (estudiante == null)
+            {
+                return NotFound();
+            }
+            estudiante.Activo = activo;
+            return NoContent();
+        }
         [HttpGet("ObtenerEstudiantesActivos")]
         public ActionResult<List<EstudianteModel>> ObtenerEstudiantesActivos()
         {
